@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { TodoForm, TodoList, Footer } from './components/todo'
-import { addTodo, generateId, findById, toggleTodo, updateTodo, removeTodo } from './lib/todoHelpers'
+import { addTodo, generateId, findById, toggleTodo, updateTodo, removeTodo, filterTodos } from './lib/todoHelpers'
 import { pipe, partial } from './lib/utils'
+import PropTypes from 'prop-types'
 
 class App extends Component {
   state = {
@@ -13,6 +14,10 @@ class App extends Component {
       {id: 3, name: 'Learn React', isComplete: true}
     ],
     currentTodo: ''
+  }
+
+  static contextTypes = {
+    route: PropTypes.string
   }
 
   handleInputChange = (event) => {
@@ -53,6 +58,7 @@ class App extends Component {
 
   render() {
     const SubmitHandler = this.state.currentTodo ? this.handleSubmit.bind(this) : this.handleInvalidSubmit.bind(this)
+    const displayTodos = filterTodos(this.state.todos, this.context.route)
 
     return (
       <div className="App">
@@ -67,7 +73,7 @@ class App extends Component {
             currentTodo = { this.state.currentTodo }
             handleSubmit = { SubmitHandler }
           />
-          <TodoList todos = { this.state.todos } 
+          <TodoList todos = { displayTodos } 
             handleToggle={ this.handleToggle }
             handleRemove={ this.handleRemove }/>
           <Footer />
